@@ -1,8 +1,8 @@
 import sys
 from datetime import datetime
-import requests
 import json
 import argparse
+from certificateFix import get_from_url
 
 api_url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_hour.geojson'
 
@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 
 def load_json(url):
-    response = requests.get(url, verify=False)
+    response = get_from_url(url)
 
     if response.status_code == 200:
         return json.loads(response.content.decode('utf-8'))
