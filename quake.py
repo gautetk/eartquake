@@ -7,10 +7,22 @@ from certificateFix import get_from_url
 api_url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_hour.geojson'
 
 parser = argparse.ArgumentParser(description='Display earthquake data for the last hour.')
-parser.add_argument('--fields', action='store_true', help='Available fields')
-parser.add_argument('--display', type=str, help='Fields to display, separated by ","')
-parser.add_argument('--sort', type=str, help='Sort earthquakes by field')
-parser.add_argument('--min_magnitude', type=float, help='Minimum earthquake magnitude')
+parser.add_argument(
+    '--fields', action='store_true',
+    help='Available fields'
+)
+parser.add_argument(
+    '--display', type=str, default='mag,place',
+    help='Fields to display, separated by ","'
+)
+parser.add_argument(
+    '--sort', type=str,
+    help='Sort earthquakes by field'
+)
+parser.add_argument(
+    '--min_magnitude', type=float,
+    help='Minimum earthquake magnitude'
+)
 
 args = parser.parse_args()
 
@@ -45,7 +57,7 @@ def list_print(li):
 
 
 def display(quakes, displays):
-    displays = args.display.split(',')
+    print('Earthquakes the last hour:')
     for q in quakes:
         list_print([f'{d}:{q[d]}' for d in displays])
 
@@ -55,8 +67,9 @@ quakes_raw = load_json(api_url)
 quakes = [parse_quake(f) for f in quakes_raw['features']]
 
 if args.fields:
+    print('Available fields:')
     list_print(sorted(quakes[0].keys()))
-    exit(1)
+    exit(0)
 
 if args.min_magnitude:
     quakes = min_mag(quakes, args.min_magnitude)
@@ -64,5 +77,4 @@ if args.min_magnitude:
 if args.sort:
     quakes = sort_quakes(quakes, args.sort)
 
-display(quakes, display)
-displays = args.display.split(',')
+display(quakes, args.display.split(','))
